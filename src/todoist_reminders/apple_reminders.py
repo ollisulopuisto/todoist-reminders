@@ -64,6 +64,8 @@ def fetch_apple_reminders(list_name: str) -> list[AppleReminder]:
             title = parts[0]
             completed = parts[1] == "true"
             todoist_id = parts[2] if len(parts) >= 3 and parts[2] else None
+            if todoist_id in ("missing value", ""):
+                todoist_id = None
             reminders.append(AppleReminder(title=title, completed=completed, todoist_id=todoist_id))
     return reminders
 
