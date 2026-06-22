@@ -29,6 +29,7 @@ def _build_parser() -> ArgumentParser:
         "--filter",
         choices=[
             "all",
+            "none",
             "inbox",
             "due",
             "upcoming-due",
@@ -38,6 +39,11 @@ def _build_parser() -> ArgumentParser:
         ],
         default="all",
         help="Filter which Todoist tasks are pushed to Apple Reminders (default: all)",
+    )
+    parser.add_argument(
+        "--no-complete-on-import",
+        action="store_true",
+        help="Do not mark Apple Reminders as completed after importing them to Todoist",
     )
     return parser
 
@@ -67,7 +73,9 @@ def _tasks_to_dicts(
                 has_upcoming_due = True
 
         should_push = True
-        if filter_mode == "inbox":
+        if filter_mode == "none":
+            should_push = False
+        elif filter_mode == "inbox":
             should_push = is_inbox
         elif filter_mode == "due":
             should_push = has_any_due
@@ -143,6 +151,7 @@ def main(
         list_name=list_name,
         todoist_client=api,
         dry_run=is_dry_run,
+        complete_on_import=not parsed.no_complete_on_import,
     )
 
     for title in result.todoist_to_apple:

@@ -277,3 +277,38 @@ class TestEdgeCases:
         assert "New from Apple" in result.apple_to_todoist
         assert "Finish me too" in result.todoist_completed
         assert "Finish me" in result.apple_completed
+
+
+# ---------------------------------------------------------------------------
+# Complete on Import mode
+# ---------------------------------------------------------------------------
+
+
+class TestCompleteOnImport:
+    def test_completes_apple_reminder_on_import(self, mock_apple: dict[str, MagicMock]) -> None:
+        mock_client = MagicMock()
+        mock_client.add_task.return_value = MagicMock(id="new-task-id")
+        result = sync(
+            [],
+            [make_reminder("Buy milk")],
+            "Todoist",
+            mock_client,
+            complete_on_import=True,
+        )
+        assert result.apple_to_todoist == ["Buy milk"]
+        assert result.apple_completed == ["Buy milk"]
+        mock_apple["complete"].assert_called_once_with("Todoist", "Buy milk")
+
+    def test_does_not_complete_by_default(self, mock_apple: dict[str, MagicMock]) -> None:
+        mock_client = MagicMock()
+        mock_client.add_task.return_value = MagicMock(id="new-task-id")
+        result = sync(
+            [],
+            [make_reminder("Buy milk")],
+            "Todoist",
+            mock_client,
+            complete_on_import=False,
+        )
+        assert result.apple_to_todoist == ["Buy milk"]
+        assert result.apple_completed == []
+        mock_apple["complete"].assert_not_called()

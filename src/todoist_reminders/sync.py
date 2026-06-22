@@ -16,6 +16,7 @@ def sync(
     list_name: str,
     todoist_client: TodoistAPI,
     dry_run: bool = False,
+    complete_on_import: bool = False,
 ) -> SyncResult:
     """
     Bidirectional sync between Todoist tasks and Apple Reminders.
@@ -62,7 +63,11 @@ def sync(
             if not dry_run:
                 new_task = todoist_client.add_task(content=rem.title)
                 update_reminder_notes(list_name, rem.title, new_task.id)
+                if complete_on_import:
+                    complete_apple_reminder(list_name, rem.title)
             result.apple_to_todoist.append(rem.title)
+            if complete_on_import:
+                result.apple_completed.append(rem.title)
 
     # 3. Apple completed -> complete in Todoist
     for rem in apple_reminders:

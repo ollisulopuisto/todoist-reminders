@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project uses [Calendar Versioning](https://calver.org/) (`vYY.MM.DD.N`).
 
+## [v26.06.22.5] - 2026-06-22
+
+### Added
+- `--no-complete-on-import` CLI flag to disable the automatic completion of imported reminders in Apple Reminders.
+- Support for `none` choice in `--filter` parameter to prevent pushing any Todoist tasks to Apple Reminders (ideal for unidirectional Siri-to-Todoist ingest).
+- Unit tests for `complete_on_import` mode and `none` filter.
+
+### Changed
+- By default, Apple Reminders imported to Todoist are now immediately marked as completed in Apple Reminders to prevent clutter (complete-on-import mode).
+
 ## [v26.06.22.4] - 2026-06-22
 
 ### Added

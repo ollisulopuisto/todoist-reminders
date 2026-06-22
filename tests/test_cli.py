@@ -77,6 +77,10 @@ class TestCli:
         res = _tasks_to_dicts(tasks, "all", "inbox-id")
         assert [r["should_push"] for r in res] == [True, True, True, True]
 
+        # Test "none" filter
+        res = _tasks_to_dicts(tasks, "none", "inbox-id")
+        assert [r["should_push"] for r in res] == [False, False, False, False]
+
         # Test "inbox" filter
         res = _tasks_to_dicts(tasks, "inbox", "inbox-id")
         assert [r["should_push"] for r in res] == [True, False, False, False]
