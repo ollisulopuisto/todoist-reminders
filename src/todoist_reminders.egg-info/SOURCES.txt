@@ -1,0 +1,14 @@
+pyproject.toml
+src/todoist_reminders/__init__.py
+src/todoist_reminders/apple_reminders.py
+src/todoist_reminders/cli.py
+src/todoist_reminders/models.py
+src/todoist_reminders/sync.py
+src/todoist_reminders.egg-info/PKG-INFO
+src/todoist_reminders.egg-info/SOURCES.txt
+src/todoist_reminders.egg-info/dependency_links.txt
+src/todoist_reminders.egg-info/requires.txt
+src/todoist_reminders.egg-info/top_level.txt
+tests/test_apple_reminders.py
+tests/test_cli.py
+tests/test_sync.py
