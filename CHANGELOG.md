@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project uses [Calendar Versioning](https://calver.org/) (`vYY.MM.DD.N`).
 
+## [v26.06.22.6] - 2026-06-22
+
+### Changed
+- Updated `README.md` documentation to cover the new `--filter` and `--no-complete-on-import` parameters, secure API token load guidelines, dry-run instructions, and iPhone/iOS Siri list configuration.
+
 ## [v26.06.22.5] - 2026-06-22
 
 ### Added
