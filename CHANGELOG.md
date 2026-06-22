@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project uses [Calendar Versioning](https://calver.org/) (`vYY.MM.DD.N`).
 
+## [v26.06.22.4] - 2026-06-22
+
+### Added
+- `--filter` CLI flag with choices: `all`, `inbox`, `due`, `upcoming-due`, `inbox-or-due`, `inbox-or-upcoming-due`, `inbox-and-upcoming-due` (default: `all`) to filter which Todoist tasks get pushed to Apple Reminders.
+- Support for fetching the Todoist Inbox project ID dynamically to support Inbox-specific sync filters.
+- Unit tests for all sync filters in `tests/test_cli.py`.
+
+### Changed
+- Sync logic now respects the `"should_push"` flag attached to tasks to avoid copying all Todoist tasks to Apple Reminders while keeping completion-tracking intact.
+
 ## [v26.06.22.3] - 2026-06-22
 
 ### Added

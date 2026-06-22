@@ -3,6 +3,7 @@
 import os
 import sys
 from argparse import ArgumentParser
+from datetime import date, datetime
 from itertools import chain
 
 from todoist_api_python.api import TodoistAPI
@@ -24,18 +25,70 @@ def _build_parser() -> ArgumentParser:
         action="store_true",
         help="Show what would be synced without making changes",
     )
+    parser.add_argument(
+        "--filter",
+        choices=[
+            "all",
+            "inbox",
+            "due",
+            "upcoming-due",
+            "inbox-or-due",
+            "inbox-or-upcoming-due",
+            "inbox-and-upcoming-due",
+        ],
+        default="all",
+        help="Filter which Todoist tasks are pushed to Apple Reminders (default: all)",
+    )
     return parser
 
 
-def _tasks_to_dicts(tasks: list[Task]) -> list[dict[str, object]]:
-    return [
-        {
-            "id": t.id,
-            "content": t.content,
-            "is_completed": t.is_completed,
-        }
-        for t in tasks
-    ]
+def _tasks_to_dicts(
+    tasks: list[Task],
+    filter_mode: str,
+    inbox_project_id: str | None,
+) -> list[dict[str, object]]:
+    from typing import cast
+
+    today = date.today()
+    dicts = []
+
+    for t in tasks:
+        is_inbox = inbox_project_id is not None and t.project_id == inbox_project_id
+        has_any_due = t.due is not None
+
+        has_upcoming_due = False
+        if t.due:
+            due_val = t.due.date
+            # The parser returns datetime.date or datetime.datetime
+            resolved_date = (
+                due_val.date() if isinstance(due_val, datetime) else cast("date", due_val)
+            )
+            if resolved_date >= today:
+                has_upcoming_due = True
+
+        should_push = True
+        if filter_mode == "inbox":
+            should_push = is_inbox
+        elif filter_mode == "due":
+            should_push = has_any_due
+        elif filter_mode == "upcoming-due":
+            should_push = has_upcoming_due
+        elif filter_mode == "inbox-or-due":
+            should_push = is_inbox or has_any_due
+        elif filter_mode == "inbox-or-upcoming-due":
+            should_push = is_inbox or has_upcoming_due
+        elif filter_mode == "inbox-and-upcoming-due":
+            should_push = is_inbox and has_upcoming_due
+
+        dicts.append(
+            {
+                "id": t.id,
+                "content": t.content,
+                "is_completed": t.is_completed,
+                "should_push": should_push,
+            }
+        )
+    return dicts
 
 
 def main(
@@ -57,11 +110,28 @@ def main(
     is_dry_run = dry_run if dry_run is not None else parsed.dry_run
 
     api = TodoistAPI(token)
+    filter_mode: str = parsed.filter
+
+    inbox_project_id = None
+    if filter_mode not in ("all", "due", "upcoming-due"):
+        try:
+            raw_project_batches = list(api.get_projects())
+            projects = list(chain.from_iterable(raw_project_batches))
+            for p in projects:
+                if getattr(p, "is_inbox_project", False):
+                    inbox_project_id = p.id
+                    break
+        except Exception as e:
+            print(
+                f"Warning: Could not fetch projects to identify Inbox: {e}",
+                file=sys.stderr,
+            )
+
     # get_tasks() returns Iterator[list[Task]]; flatten to list[Task]
     raw_batches: list[list[Task]] = list(api.get_tasks())
     tasks: list[Task] = list(chain.from_iterable(raw_batches))
 
-    task_dicts = _tasks_to_dicts(tasks)
+    task_dicts = _tasks_to_dicts(tasks, filter_mode, inbox_project_id)
     apple_reminders = fetch_apple_reminders(list_name)
 
     if is_dry_run:

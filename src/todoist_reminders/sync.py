@@ -45,6 +45,8 @@ def sync(
     for task in todoist_tasks:
         if task.get("is_completed"):
             continue
+        if not task.get("should_push", True):
+            continue
         content = str(task["content"])
         if content not in apple_by_title:
             if not dry_run:
