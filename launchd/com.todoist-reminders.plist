@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Unique identifier for this agent -->
+    <key>Label</key>
+    <string>com.todoist-reminders</string>
+
+    <!-- Full path to the installed CLI inside the project venv -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/dst/Documents/koodi/todoist-reminders/.venv/bin/todoist-reminders</string>
+    </array>
+
+    <!-- Token — fill in your real Todoist API token here, then install the plist -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>TODOIST_TOKEN</key>
+        <string>YOUR_TODOIST_API_TOKEN_HERE</string>
+    </dict>
+
+    <!-- Run every 5 minutes (300 seconds) -->
+    <key>StartInterval</key>
+    <integer>300</integer>
+
+    <!-- Also run immediately when the agent is loaded -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- Logs — viewable with: tail -f ~/Library/Logs/todoist-reminders.log -->
+    <key>StandardOutPath</key>
+    <string>/Users/dst/Library/Logs/todoist-reminders.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/dst/Library/Logs/todoist-reminders-error.log</string>
+</dict>
+</plist>

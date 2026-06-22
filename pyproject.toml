@@ -1,11 +1,14 @@
 [project]
 name = "todoist-reminders"
-version = "0.1.0"
+version = "26.06.22.3"
 description = "Bidirectional sync between Todoist and Apple Reminders"
 requires-python = ">=3.13"
 dependencies = [
     "todoist-api-python>=4.0.0",
 ]
+
+[project.scripts]
+todoist-reminders = "todoist_reminders.cli:main"
 
 [dependency-groups]
 dev = [
@@ -21,30 +24,76 @@ line-length = 100
 
 [tool.ruff.lint]
 select = [
-    "E",   # pycodestyle errors
-    "W",   # pycodestyle warnings
-    "F",   # pyflakes
-    "I",   # isort
-    "N",   # pep8-naming
-    "UP",  # pyupgrade
-    "B",   # flake8-bugbear
-    "SIM", # flake8-simplify
-    "TCH", # flake8-type-checking
-    "RUF", # ruff-specific
-    "S",   # flake8-bandit (security)
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "TCH",  # flake8-type-checking
+    "RUF",  # ruff-specific
+    "S",    # flake8-bandit (security)
+    "PTH",  # flake8-use-pathlib
+    "RET",  # flake8-return
+    "SLF",  # flake8-self
+    "C4",   # flake8-comprehensions
+    "A",    # flake8-builtins
+    "EM",   # flake8-errmsg
+    "ISC",  # flake8-implicit-str-concat
+    "PIE",  # flake8-pie
+    "PT",   # flake8-pytest-style
+    "RSE",  # flake8-raise
+    "TRY",  # flake8-trio (try/except best practices)
+    "FURB", # refurb
+    "LOG",  # flake8-logging
+    "G",    # flake8-logging-format
+    "T20",  # flake8-print
+    "ERA",  # eradicate (commented-out code)
 ]
-ignore = []
+
+ignore = [
+    "E501",    # line length handled by formatter
+    "S101",    # assert allowed in tests (global, overridden below too)
+    "EM101",   # raw string in exception — ok for this project size
+    "EM102",   # f-string in exception — ok
+    "TRY003",  # long message in builtin exception — ok
+    "PIE796",  # non-enique enum member — not using enums
+    "ISC001",  # conflicts with ruff format if added later
+    "S603",    # subprocess with untrusted input — we control all inputs
+    "S607",    # partial path for process — we use full /usr/bin/osascript
+    "ERA001",  # commented-out code allowed during development
+    "T201",    # print allowed — this is a CLI tool
+    "SLF001",  # private member access allowed in tests
+    "RET504",  # unnecessary assignment before return — readability choice
+    "FURB171", # re.sub match — not relevant
+    "B011",    # assert False — allowed in tests
+    "PIE790",  # unnecessary pass — false positives sometimes
+    "A001",    # shadowing builtins — 'id' is fine as variable name
+    "A002",    # shadowing in args — 'id' parameter ok
+]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["S101"]  # assert allowed in tests
+"tests/**" = [
+    "S",        # no security checks in tests
+    "SLF001",   # accessing private members in tests is fine
+    "EM",       # exception message hygiene not needed in tests
+    "TRY",      # try/except best practices relaxed in tests
+    "PLR",      # pylint-refactor relaxed in tests
+]
+
 
 [tool.mypy]
 python_version = "3.13"
 strict = true
-
-[[tool.mypy.overrides]]
-module = ["todoist_api_python.*"]
-ignore_missing_imports = false
+enable_error_code = [
+    "ignore-without-code",
+    "redundant-expr",
+    "truthy-bool",
+    "truthy-iterable",
+    "unused-awaitable",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

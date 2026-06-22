@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Tool caches
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Graphify output (generated, not source)
+graphify-out/
+
+# Environment / secrets — NEVER commit these
+.env
+.env.*
+*.token
+
+# macOS
+.DS_Store

@@ -7,7 +7,7 @@ from todoist_reminders.models import AppleReminder
 
 def run_applescript(script: str) -> str:
     """Execute an AppleScript command and return stdout."""
-    result = subprocess.run(  # noqa: S603
+    result = subprocess.run(
         ["/usr/bin/osascript", "-e", script],
         capture_output=True,
         text=True,
@@ -28,7 +28,7 @@ def ensure_list_exists(list_name: str) -> None:
         f'tell application "Reminders"\n'
         f'    if not (exists list "{safe}") then\n'
         f'        make new list with properties {{name:"{safe}"}}\n'
-        f'    end if\n'
+        f"    end if\n"
         f"end tell"
     )
 
@@ -41,18 +41,18 @@ def fetch_apple_reminders(list_name: str) -> list[AppleReminder]:
         f'    set result_list to ""\n'
         f'    if exists list "{safe}" then\n'
         f'        set all_reminders to every reminder of list "{safe}"\n'
-        f'        repeat with r in all_reminders\n'
-        f'            set r_name to name of r\n'
-        f'            set r_completed to completed of r\n'
+        f"        repeat with r in all_reminders\n"
+        f"            set r_name to name of r\n"
+        f"            set r_completed to completed of r\n"
         f'            set r_notes to ""\n'
-        f'            try\n'
-        f'                set r_notes to body of r\n'
-        f'            end try\n'
+        f"            try\n"
+        f"                set r_notes to body of r\n"
+        f"            end try\n"
         f"            set result_list to result_list"
-        f' & r_name & tab & r_completed & tab & r_notes & linefeed\n'
-        f'        end repeat\n'
-        f'    end if\n'
-        f'    return result_list\n'
+        f" & r_name & tab & r_completed & tab & r_notes & linefeed\n"
+        f"        end repeat\n"
+        f"    end if\n"
+        f"    return result_list\n"
         f"end tell"
     )
     reminders: list[AppleReminder] = []
@@ -64,9 +64,7 @@ def fetch_apple_reminders(list_name: str) -> list[AppleReminder]:
             title = parts[0]
             completed = parts[1] == "true"
             todoist_id = parts[2] if len(parts) >= 3 and parts[2] else None
-            reminders.append(
-                AppleReminder(title=title, completed=completed, todoist_id=todoist_id)
-            )
+            reminders.append(AppleReminder(title=title, completed=completed, todoist_id=todoist_id))
     return reminders
 
 
@@ -79,9 +77,9 @@ def add_apple_reminder(list_name: str, title: str, todoist_id: str) -> None:
     run_applescript(
         f'tell application "Reminders"\n'
         f'    tell list "{safe_list}"\n'
-        f'        make new reminder with properties'
+        f"        make new reminder with properties"
         f' {{name:"{safe_title}", body:"{safe_id}"}}\n'
-        f'    end tell\n'
+        f"    end tell\n"
         f"end tell"
     )
 
@@ -93,10 +91,10 @@ def complete_apple_reminder(list_name: str, title: str) -> None:
     run_applescript(
         f'tell application "Reminders"\n'
         f'    tell list "{safe_list}"\n'
-        f'        set target to (first reminder'
+        f"        set target to (first reminder"
         f' whose name is "{safe_title}" and completed is false)\n'
-        f'        set completed of target to true\n'
-        f'    end tell\n'
+        f"        set completed of target to true\n"
+        f"    end tell\n"
         f"end tell"
     )
 
@@ -109,9 +107,9 @@ def update_reminder_notes(list_name: str, title: str, todoist_id: str) -> None:
     run_applescript(
         f'tell application "Reminders"\n'
         f'    tell list "{safe_list}"\n'
-        f'        set target to (first reminder'
+        f"        set target to (first reminder"
         f' whose name is "{safe_title}" and completed is false)\n'
         f'        set body of target to "{safe_id}"\n'
-        f'    end tell\n'
+        f"    end tell\n"
         f"end tell"
     )

@@ -13,9 +13,7 @@ from todoist_reminders.apple_reminders import fetch_apple_reminders
 
 
 def _build_parser() -> ArgumentParser:
-    parser = ArgumentParser(
-        description="Bidirectional sync between Todoist and Apple Reminders"
-    )
+    parser = ArgumentParser(description="Bidirectional sync between Todoist and Apple Reminders")
     parser.add_argument(
         "--list",
         default="Todoist",
