@@ -9,7 +9,7 @@ from itertools import chain
 from todoist_api_python.api import TodoistAPI
 from todoist_api_python.models import Task
 
-from todoist_reminders import SyncResult, sync
+from todoist_reminders import sync
 from todoist_reminders.apple_reminders import fetch_apple_reminders
 
 
@@ -102,7 +102,7 @@ def _tasks_to_dicts(
 def main(
     args: list[str] | None = None,
     dry_run: bool | None = None,
-) -> SyncResult:
+) -> None:
     parser = _build_parser()
     parsed = parser.parse_args(args)
 
@@ -175,7 +175,7 @@ def main(
         label = "Would sync" if is_dry_run else "Synced"
         print(f"{label} {total} item(s).")
 
-    return result
+    return
 
 
 if __name__ == "__main__":

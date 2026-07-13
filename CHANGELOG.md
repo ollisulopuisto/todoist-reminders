@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project uses [Calendar Versioning](https://calver.org/) (`vYY.MM.DD.N`).
 
+## [v26.07.13.8] - 2026-07-13
+
+### Fixed
+- Fixed CLI wrapper script crash on completion. Changed `main()`'s return type from `SyncResult` to `None`. This prevents `sys.exit()` in the auto-generated `todoist-reminders` wrapper script from printing the `SyncResult` dataclass to `sys.stderr` and exiting with code `1`, which was causing launchd to register sync runs as failures.
+
 ## [v26.06.22.7] - 2026-06-22
 
 ### Fixed
