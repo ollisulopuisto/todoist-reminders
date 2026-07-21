@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project uses [Calendar Versioning](https://calver.org/) (`vYY.MM.DD.N`).
 
+## [v26.07.21.12] - 2026-07-21
+
+### Fixed
+- Reverted AppleScript query in `fetch_apple_reminders` to fetch all list reminders safely without AppleScript error -1728.
+
 ## [v26.07.21.11] - 2026-07-21
 
 ### Fixed

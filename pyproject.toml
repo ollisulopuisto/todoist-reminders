@@ -1,6 +1,6 @@
 [project]
 name = "todoist-reminders"
-version = "26.07.21.11"
+version = "26.07.21.12"
 description = "Bidirectional sync between Todoist and Apple Reminders"
 requires-python = ">=3.13"
 dependencies = [

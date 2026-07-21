@@ -40,7 +40,7 @@ def fetch_apple_reminders(list_name: str) -> list[AppleReminder]:
         f'tell application "Reminders"\n'
         f'    set result_list to ""\n'
         f'    if exists list "{safe}" then\n'
-        f'        set all_reminders to (every reminder of list "{safe}" whose completed is false)\n'
+        f'        set all_reminders to every reminder of list "{safe}"\n'
         f"        repeat with r in all_reminders\n"
         f"            set r_name to name of r\n"
         f"            set r_completed to completed of r\n"
