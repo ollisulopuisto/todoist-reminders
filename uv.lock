@@ -347,7 +347,7 @@ wheels = [
 
 [[package]]
 name = "todoist-reminders"
-version = "26.7.13.8"
+version = "26.7.21.11"
 source = { virtual = "." }
 dependencies = [
     { name = "todoist-api-python" },

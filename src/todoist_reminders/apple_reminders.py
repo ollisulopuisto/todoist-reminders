@@ -40,7 +40,7 @@ def fetch_apple_reminders(list_name: str) -> list[AppleReminder]:
         f'tell application "Reminders"\n'
         f'    set result_list to ""\n'
         f'    if exists list "{safe}" then\n'
-        f'        set all_reminders to every reminder of list "{safe}"\n'
+        f'        set all_reminders to (every reminder of list "{safe}" whose completed is false)\n'
         f"        repeat with r in all_reminders\n"
         f"            set r_name to name of r\n"
         f"            set r_completed to completed of r\n"
@@ -50,13 +50,7 @@ def fetch_apple_reminders(list_name: str) -> list[AppleReminder]:
         f"            end try\n"
         f'            set r_date to ""\n'
         f"            try\n"
-        f"                if due date of r is not missing value then\n"
-        f"                    set d to due date of r\n"
-        f"                else if remind me date of r is not missing value then\n"
-        f"                    set d to remind me date of r\n"
-        f"                else\n"
-        f"                    set d to missing value\n"
-        f"                end if\n"
+        f"                set d to due date of r\n"
         f"                if d is not missing value then\n"
         f"                    set y to year of d\n"
         f'                    set m to text -2 thru -1 of ("0" & (month of d as integer))\n'
