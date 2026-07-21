@@ -73,6 +73,18 @@ class TestTodoistToApple:
         )
         assert result.todoist_to_apple == ["New"]
 
+    def test_new_task_pushed_with_due_date(self, mock_apple: dict[str, MagicMock]) -> None:
+        result = sync(
+            [make_task("t1", "Buy milk", due_date="2026-07-25 15:00:00")],
+            [],
+            "Todoist",
+            MagicMock(),
+        )
+        assert result.todoist_to_apple == ["Buy milk"]
+        mock_apple["add"].assert_called_once_with(
+            "Todoist", "Buy milk", "t1", due_date="2026-07-25 15:00:00"
+        )
+
 
 # ---------------------------------------------------------------------------
 # Direction 2: Apple → Todoist (push new reminders)
@@ -86,6 +98,20 @@ class TestAppleToTodoist:
         result = sync([], [make_reminder("Call mom")], "Todoist", mock_client)
         assert result.apple_to_todoist == ["Call mom"]
         mock_client.add_task.assert_called_once_with(content="Call mom")
+
+    def test_new_reminder_pushed_with_due_date(self, mock_apple: dict[str, MagicMock]) -> None:
+        mock_client = MagicMock()
+        mock_client.add_task.return_value = MagicMock(id="new-t1")
+        result = sync(
+            [],
+            [make_reminder("Call mom", due_date="2026-07-25 15:00:00")],
+            "Todoist",
+            mock_client,
+        )
+        assert result.apple_to_todoist == ["Call mom"]
+        mock_client.add_task.assert_called_once_with(
+            content="Call mom", due_string="2026-07-25 15:00:00"
+        )
 
     def test_with_todoist_id_skipped(self, mock_apple: dict[str, MagicMock]) -> None:
         result = sync(

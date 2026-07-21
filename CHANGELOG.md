@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project uses [Calendar Versioning](https://calver.org/) (`vYY.MM.DD.N`).
 
+## [v26.07.21.10] - 2026-07-21
+
+### Added
+- Bidirectional due date/time sync between Apple Reminders and Todoist (`due date` / `remind me date` → Todoist `due_string`, and Todoist `due.date` → Apple `due date`).
+
 ## [v26.07.21.9] - 2026-07-21
 
 ### Added

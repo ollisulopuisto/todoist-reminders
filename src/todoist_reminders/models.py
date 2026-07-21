@@ -10,6 +10,7 @@ class AppleReminder:
     title: str
     completed: bool
     todoist_id: str | None = None  # stored in notes/body field
+    due_date: str | None = None
 
 
 @dataclass

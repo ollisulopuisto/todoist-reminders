@@ -88,12 +88,17 @@ def _tasks_to_dicts(
         elif filter_mode == "inbox-and-upcoming-due":
             should_push = is_inbox and has_upcoming_due
 
+        due_date_str = None
+        if t.due is not None:
+            due_date_str = t.due.date.isoformat()
+
         dicts.append(
             {
                 "id": t.id,
                 "content": t.content,
                 "is_completed": t.is_completed,
                 "should_push": should_push,
+                "due_date": due_date_str,
             }
         )
     return dicts

@@ -105,15 +105,31 @@ def scenario() -> SyncScenario:
 # ---------------------------------------------------------------------------
 
 
-def make_task(task_id: str, content: str, completed: bool = False) -> dict[str, object]:
+def make_task(
+    task_id: str,
+    content: str,
+    completed: bool = False,
+    due_date: str | None = None,
+) -> dict[str, object]:
     """Build a Todoist task dict for sync()."""
-    return {"id": task_id, "content": content, "is_completed": completed}
+    return {
+        "id": task_id,
+        "content": content,
+        "is_completed": completed,
+        "due_date": due_date,
+    }
 
 
 def make_reminder(
     title: str,
     completed: bool = False,
     todoist_id: str | None = None,
+    due_date: str | None = None,
 ) -> AppleReminder:
     """Build an AppleReminder for tests."""
-    return AppleReminder(title=title, completed=completed, todoist_id=todoist_id)
+    return AppleReminder(
+        title=title,
+        completed=completed,
+        todoist_id=todoist_id,
+        due_date=due_date,
+    )

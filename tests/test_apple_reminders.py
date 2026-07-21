@@ -108,28 +108,32 @@ class TestFetchAppleReminders:
         ("stdout", "expected"),
         [
             pytest.param(
-                "Buy milk\tfalse\t\n",
-                [("Buy milk", False, None)],
+                "Buy milk\tfalse\t\t\n",
+                [("Buy milk", False, None, None)],
                 id="single-no-id",
             ),
             pytest.param(
-                "Buy milk\tfalse\tabc123\n",
-                [("Buy milk", False, "abc123")],
+                "Buy milk\tfalse\tabc123\t2026-07-25 15:00:00\n",
+                [("Buy milk", False, "abc123", "2026-07-25 15:00:00")],
                 id="single-with-id",
             ),
             pytest.param(
-                "Done\ttrue\tid1\n",
-                [("Done", True, "id1")],
+                "Done\ttrue\tid1\t2026-07-25\n",
+                [("Done", True, "id1", "2026-07-25")],
                 id="completed-with-id",
             ),
             pytest.param(
-                "A\tfalse\t\nB\ttrue\tid1\nC\tfalse\tid2\n",
-                [("A", False, None), ("B", True, "id1"), ("C", False, "id2")],
+                "A\tfalse\t\t\nB\ttrue\tid1\t2026-07-25 10:00:00\nC\tfalse\tid2\t\n",
+                [
+                    ("A", False, None, None),
+                    ("B", True, "id1", "2026-07-25 10:00:00"),
+                    ("C", False, "id2", None),
+                ],
                 id="multiple-mixed",
             ),
             pytest.param(
-                "Task\tfalse\t\n",
-                [("Task", False, None)],
+                "Task\tfalse\t\t\n",
+                [("Task", False, None, None)],
                 id="empty-notes-field",
             ),
         ],
@@ -138,15 +142,16 @@ class TestFetchAppleReminders:
         self,
         mock_osascript: MagicMock,
         stdout: str,
-        expected: list[tuple[str, bool, str | None]],
+        expected: list[tuple[str, bool, str | None, str | None]],
     ) -> None:
         mock_osascript.return_value.stdout = stdout
         result = fetch_apple_reminders("TestList")
         assert len(result) == len(expected)
-        for rem, (title, completed, tid) in zip(result, expected, strict=True):
+        for rem, (title, completed, tid, due) in zip(result, expected, strict=True):
             assert rem.title == title
             assert rem.completed is completed
             assert rem.todoist_id == tid
+            assert rem.due_date == due
 
     def test_escapes_list_name_in_script(self, mock_osascript: MagicMock) -> None:
         fetch_apple_reminders('List"WithQuotes')

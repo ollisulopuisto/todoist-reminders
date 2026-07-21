@@ -51,7 +51,8 @@ def sync(
         content = str(task["content"])
         if content not in apple_by_title:
             if not dry_run:
-                add_apple_reminder(list_name, content, str(task["id"]))
+                due_date = str(task["due_date"]) if task.get("due_date") else None
+                add_apple_reminder(list_name, content, str(task["id"]), due_date=due_date)
             result.todoist_to_apple.append(content)
 
     # 2. Apple -> Todoist: push reminders that have no todoist_id and no matching
@@ -61,7 +62,10 @@ def sync(
             continue
         if rem.todoist_id is None and rem.title not in todoist_by_content:
             if not dry_run:
-                new_task = todoist_client.add_task(content=rem.title)
+                if rem.due_date:
+                    new_task = todoist_client.add_task(content=rem.title, due_string=rem.due_date)
+                else:
+                    new_task = todoist_client.add_task(content=rem.title)
                 update_reminder_notes(list_name, rem.title, new_task.id)
                 if complete_on_import:
                     complete_apple_reminder(list_name, rem.title)
