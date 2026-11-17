@@ -107,8 +107,8 @@ def add_apple_reminder(
     safe_list = escape_applescript(list_name)
     safe_title = escape_applescript(title)
     safe_id = escape_applescript(todoist_id)
-    ensure_list_exists(list_name)
 
+    # Keep direct/library callers safe without a second osascript process.
     date_script = ""
     if due_date:
         try:
@@ -138,6 +138,9 @@ def add_apple_reminder(
 
     run_applescript(
         f'tell application "Reminders"\n'
+        f'    if not (exists list "{safe_list}") then\n'
+        f'        make new list with properties {{name:"{safe_list}"}}\n'
+        f'    end if\n'
         f'    tell list "{safe_list}"\n'
         f"        set new_rem to make new reminder with properties"
         f' {{name:"{safe_title}", body:"{safe_id}"}}\n'

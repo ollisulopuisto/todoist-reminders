@@ -172,9 +172,14 @@ class TestFetchAppleReminders:
 
 
 class TestAddAppleReminder:
-    def test_creates_list_then_adds(self, mock_osascript: MagicMock) -> None:
+    def test_direct_add_creates_missing_list_in_the_same_process(self, mock_osascript: MagicMock) -> None:
+        """The public add API creates a missing list without an extra process."""
         add_apple_reminder("MyList", "Task", "tid-1")
-        assert mock_osascript.call_count == 2  # ensure_list + add
+        assert mock_osascript.call_count == 1
+        script = mock_osascript.call_args[0][0][-1]
+        assert 'if not (exists list "MyList")' in script
+        assert script.index("make new list") < script.index("make new reminder")
+        assert "make new reminder" in mock_osascript.call_args[0][0][-1]
 
     def test_escapes_all_user_input(self, mock_osascript: MagicMock) -> None:
         add_apple_reminder('L"1', 'T"2', 'id"3')
@@ -187,7 +192,7 @@ class TestAddAppleReminder:
 
     def test_add_call_contains_body_with_id(self, mock_osascript: MagicMock) -> None:
         add_apple_reminder("MyList", "Task", "my-id-42")
-        add_script = mock_osascript.call_args_list[1][0][0][-1]
+        add_script = mock_osascript.call_args_list[0][0][0][-1]
         assert "my-id-42" in add_script
         assert "body" in add_script
 

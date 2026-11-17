@@ -32,6 +32,18 @@ class TestCli:
             main(["--dry-run"])
             mock_sync.assert_called_once()
 
+    @pytest.mark.parametrize("args", [[], ["--dry-run"]])
+    def test_empty_run_does_not_create_a_list(self, args: list[str]) -> None:
+        with (
+            patch.dict(os.environ, {"TODOIST_TOKEN": "test-token"}),
+            patch("todoist_reminders.cli.TodoistAPI") as api,
+            patch("todoist_reminders.cli.fetch_apple_reminders", return_value=[]),
+            patch("todoist_reminders.apple_reminders.run_applescript") as script,
+        ):
+            api.return_value.get_tasks.return_value = iter([[]])
+            main(args)
+            script.assert_not_called()
+
     def test_tasks_to_dicts_filters(self) -> None:
         from datetime import date, timedelta
 
