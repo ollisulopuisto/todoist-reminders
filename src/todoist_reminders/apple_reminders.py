@@ -107,8 +107,10 @@ def add_apple_reminder(
     safe_list = escape_applescript(list_name)
     safe_title = escape_applescript(title)
     safe_id = escape_applescript(todoist_id)
-    ensure_list_exists(list_name)
 
+    # NOTE: list creation is hoisted to cli.main() (once per sync run).
+    # Calling ensure_list_exists here would spawn a redundant osascript
+    # process for every reminder pushed (2N -> N+1 subprocesses total).
     date_script = ""
     if due_date:
         try:

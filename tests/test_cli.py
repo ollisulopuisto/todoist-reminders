@@ -32,6 +32,48 @@ class TestCli:
             main(["--dry-run"])
             mock_sync.assert_called_once()
 
+    def test_ensures_list_exists_once_per_run(self) -> None:
+        """ensure_list_exists is hoisted to main() and called once per non-dry-run sync."""
+        with (
+            patch.dict(os.environ, {"TODOIST_TOKEN": "test-token"}),
+            patch("todoist_reminders.cli.TodoistAPI") as mock_api,
+            patch("todoist_reminders.cli.fetch_apple_reminders", return_value=[]),
+            patch("todoist_reminders.cli.sync") as mock_sync,
+            patch("todoist_reminders.cli.ensure_list_exists") as mock_ensure,
+        ):
+            mock_client = MagicMock()
+            mock_client.get_tasks.return_value = iter([[]])
+            mock_api.return_value = mock_client
+            mock_sync.return_value = MagicMock(
+                todoist_to_apple=[],
+                apple_to_todoist=[],
+                todoist_completed=[],
+                apple_completed=[],
+            )
+            main([])
+            mock_ensure.assert_called_once_with("Todoist")
+
+    def test_does_not_ensure_list_in_dry_run(self) -> None:
+        """ensure_list_exists must not run in dry-run (no changes are made)."""
+        with (
+            patch.dict(os.environ, {"TODOIST_TOKEN": "test-token"}),
+            patch("todoist_reminders.cli.TodoistAPI") as mock_api,
+            patch("todoist_reminders.cli.fetch_apple_reminders", return_value=[]),
+            patch("todoist_reminders.cli.sync") as mock_sync,
+            patch("todoist_reminders.cli.ensure_list_exists") as mock_ensure,
+        ):
+            mock_client = MagicMock()
+            mock_client.get_tasks.return_value = iter([[]])
+            mock_api.return_value = mock_client
+            mock_sync.return_value = MagicMock(
+                todoist_to_apple=[],
+                apple_to_todoist=[],
+                todoist_completed=[],
+                apple_completed=[],
+            )
+            main(["--dry-run"])
+            mock_ensure.assert_not_called()
+
     def test_tasks_to_dicts_filters(self) -> None:
         from datetime import date, timedelta
 

@@ -10,7 +10,7 @@ from todoist_api_python.api import TodoistAPI
 from todoist_api_python.models import Task
 
 from todoist_reminders import sync
-from todoist_reminders.apple_reminders import fetch_apple_reminders
+from todoist_reminders.apple_reminders import ensure_list_exists, fetch_apple_reminders
 
 
 def _build_parser() -> ArgumentParser:
@@ -149,6 +149,10 @@ def main(
 
     if is_dry_run:
         print("DRY RUN - no changes will be made.")
+    else:
+        # Ensure the target list exists once per run instead of once per
+        # reminder pushed (avoids a redundant osascript subprocess per add).
+        ensure_list_exists(list_name)
 
     result = sync(
         todoist_tasks=task_dicts,
