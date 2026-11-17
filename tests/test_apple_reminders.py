@@ -172,10 +172,13 @@ class TestFetchAppleReminders:
 
 
 class TestAddAppleReminder:
-    def test_add_does_not_ensure_list(self, mock_osascript: MagicMock) -> None:
-        """add_apple_reminder only adds; list creation is hoisted to main() once per run."""
+    def test_direct_add_creates_missing_list_in_the_same_process(self, mock_osascript: MagicMock) -> None:
+        """The public add API creates a missing list without an extra process."""
         add_apple_reminder("MyList", "Task", "tid-1")
-        assert mock_osascript.call_count == 1  # add only
+        assert mock_osascript.call_count == 1
+        script = mock_osascript.call_args[0][0][-1]
+        assert 'if not (exists list "MyList")' in script
+        assert script.index("make new list") < script.index("make new reminder")
         assert "make new reminder" in mock_osascript.call_args[0][0][-1]
 
     def test_escapes_all_user_input(self, mock_osascript: MagicMock) -> None:
